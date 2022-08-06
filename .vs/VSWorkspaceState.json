@@ -1,8 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\App"
+    "\\App",
+    "\\bin",
+    "\\Domain",
+    "\\UI"
   ],
-  "SelectedNode": "\\bin",
+  "SelectedNode": "\\ATM App.sln.csproj",
   "PreviewInSolutionExplorer": false
 }

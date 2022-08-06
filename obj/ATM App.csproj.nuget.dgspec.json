@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\dfranklin\\source\\repos\\ATM App\\ATM App\\ATM App.csproj": {}
+    "C:\\Users\\dfranklin\\Code\\C#\\ATMApp\\ATM App.csproj": {}
   },
   "projects": {
-    "C:\\Users\\dfranklin\\source\\repos\\ATM App\\ATM App\\ATM App.csproj": {
+    "C:\\Users\\dfranklin\\Code\\C#\\ATMApp\\ATM App.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\dfranklin\\source\\repos\\ATM App\\ATM App\\ATM App.csproj",
+        "projectUniqueName": "C:\\Users\\dfranklin\\Code\\C#\\ATMApp\\ATM App.csproj",
         "projectName": "ATM App",
-        "projectPath": "C:\\Users\\dfranklin\\source\\repos\\ATM App\\ATM App\\ATM App.csproj",
+        "projectPath": "C:\\Users\\dfranklin\\Code\\C#\\ATMApp\\ATM App.csproj",
         "packagesPath": "C:\\Users\\dfranklin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\dfranklin\\source\\repos\\ATM App\\ATM App\\obj\\",
+        "outputPath": "C:\\Users\\dfranklin\\Code\\C#\\ATMApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\dfranklin\\AppData\\Roaming\\NuGet\\NuGet.Config",
