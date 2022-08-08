@@ -11,6 +11,7 @@ namespace ATM_App.Domain.Enums
         CheckBalance = 1,
         PlaceDeposit,
         MakeWithdrawal,
+        SelfTransfer,
         InternalTransfer,
         ViewTransaction,
         Logout

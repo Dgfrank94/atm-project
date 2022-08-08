@@ -6,6 +6,7 @@ namespace ATM_App.UI
     public class AppScreen
     {
         internal const string cur = "$ ";
+
         internal static void Welcome()
         {
             //clears the console screen
@@ -63,10 +64,11 @@ namespace ATM_App.UI
             Console.WriteLine(":                           :");
             Console.WriteLine("1. Account Balance          :");
             Console.WriteLine("2. Deposit                  :");
-            Console.WriteLine("3. Withdrawal               :");
-            Console.WriteLine("4. Transfer                 :");
-            Console.WriteLine("5. Transactions             :");
-            Console.WriteLine("6. Logout                   :");
+            Console.WriteLine("4. Withdrawal               :");
+            Console.WriteLine("5. Self Transfer            :");
+            Console.WriteLine("6. Internal Transfer        :");
+            Console.WriteLine("7. Transactions             :");
+            Console.WriteLine("8. Logout                   :");
         }
 
         internal static void LogoutProgress()
@@ -83,7 +85,7 @@ namespace ATM_App.UI
             Console.WriteLine(":2.{0}100", cur);
             Console.WriteLine(":3.{0}50", cur);
             Console.WriteLine(":4.{0}20", cur);
-            Console.WriteLine(":0.Other", cur);
+            Console.WriteLine(":0.Other");
 
             int selectedAmount = Validator.Convert<int>("option:");
             
@@ -112,6 +114,15 @@ namespace ATM_App.UI
             internalTransfer.TransferAmount = Validator.Convert<decimal>($"amount {cur}");
             internalTransfer.RecipientBankAccountName = Utility.GetUserInput("recipient name: ");
             return internalTransfer;
+        }
+
+        internal static SelfTransfer SelfTransferForm()
+        {
+            SelfTransfer selfTransfer = new();
+            selfTransfer.BankAccountNumber = Validator.Convert<long>("account number:");
+            selfTransfer.TransferAmount = Validator.Convert<decimal>($"amount {cur}");
+            selfTransfer.BankAccountName = Utility.GetUserInput("recipient name: ");
+            return selfTransfer;
         }
     }
 }

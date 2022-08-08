@@ -6,6 +6,8 @@ namespace ATM_App.Domain.Entities
     {
         public int Id { get; set; }
 
+        public string AccountType { get; set; }
+
         public long CardNumber { get; set; }
 
         public int CardPin { get; set; }

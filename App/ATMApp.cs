@@ -15,12 +15,12 @@ namespace ATM_App
         private UserAccount selectedAccount;
         private List<Transaction> _listOfTransactions;
         private const decimal minimumKeptAmount = 5;
-        private readonly AppScreen screen;
+        // private readonly AppScreen screen;
 
-        public ATMApp()
+       /* public ATMApp()
         {
             screen = new AppScreen();
-        }
+        }*/
 
         public void Run()
         {
@@ -38,10 +38,11 @@ namespace ATM_App
         {
             userAccountList = new List<UserAccount>
             {
-                new UserAccount{Id = 1, FullName = "Dalayno Franklin", AccountNumber = 123456, CardNumber = 123456789, CardPin = 6052, AccountBalance = 50000.00m, IsLocked = false},
-                new UserAccount{Id = 2, FullName = "Alana Reyes", AccountNumber = 123123, CardNumber = 987654321, CardPin = 0417, AccountBalance = 1000000.00m, IsLocked = false},
-                new UserAccount{Id = 3, FullName = "Bailey Mac", AccountNumber = 654321, CardNumber = 0123456789, CardPin = 0527, AccountBalance = 200.00m, IsLocked = true},
-                new UserAccount{Id = 4, FullName = "Yolanda Mac", AccountNumber = 0123, CardNumber = 012301230123, CardPin = 1126, AccountBalance = 1500.00m, IsLocked = false},
+                new UserAccount{Id = 1, AccountType = "Savings", FullName = "Dalayno Franklin", AccountNumber = 123456, CardNumber = 123456789, CardPin = 6052, AccountBalance = 50000.00m, IsLocked = false},
+                new UserAccount{Id = 2, AccountType = "Savings", FullName = "Alana Reyes", AccountNumber = 123123, CardNumber = 987654321, CardPin = 0417, AccountBalance = 1000000.00m, IsLocked = false},
+                new UserAccount{Id = 3, AccountType = "Checking", FullName = "Bailey Mac", AccountNumber = 654321, CardNumber = 0123456789, CardPin = 0527, AccountBalance = 200.00m, IsLocked = true},
+                new UserAccount{Id = 4, AccountType = "Checking", FullName = "Yolanda Mac", AccountNumber = 0123, CardNumber = 012301230123, CardPin = 1126, AccountBalance = 1500.00m, IsLocked = false},
+                new UserAccount{Id = 5, AccountType = "Checking", FullName = "Dalayno Franklin", AccountNumber = 410, CardNumber = 410410410, CardPin = 6052, AccountBalance = 500.00m, IsLocked = false},
             };
 
             _listOfTransactions = new List<Transaction>();
@@ -106,6 +107,10 @@ namespace ATM_App
                     break;
                 case (int)AppMenu.MakeWithdrawal:
                     MakeWithdrawal();
+                    break;
+                case (int)AppMenu.SelfTransfer:
+                    var selfTransfer = AppScreen.SelfTransferForm();
+                    ProcessSelfTransfer(selfTransfer);
                     break;
                 case (int)AppMenu.InternalTransfer:
                     var internalTransfer = AppScreen.InternalTransferForm();
@@ -248,6 +253,63 @@ namespace ATM_App
             };
 
             _listOfTransactions.Add(transaction);
+        }
+
+        private void ProcessSelfTransfer(SelfTransfer selfTransfer)
+        {
+            if (selfTransfer.TransferAmount <= 0)
+            {
+                Utility.PrintMessage("Amount needs to be more than zero. Try again", true);
+                return;
+            }
+
+            // check sender's account balance
+            if (selfTransfer.TransferAmount > selectedAccount.AccountBalance)
+            {
+                Utility.PrintMessage($"Transfer failed. You do not have enough funds to transfer {Utility.FormatAmount(selfTransfer.TransferAmount)}");
+                return;
+            }
+
+            // check minimum amount
+            if ((selectedAccount.AccountBalance - selfTransfer.TransferAmount) < minimumKeptAmount)
+            {
+                Utility.PrintMessage($"Transfer failed. Your account need to have a minimum of {Utility.FormatAmount(minimumKeptAmount)}", false);
+                return;
+            }
+
+            // check to see if recipient's account number is valid
+            var selectedBankAccountRecipient = (from userAcc in userAccountList
+                                                where userAcc.AccountNumber == selfTransfer.BankAccountNumber
+                                                select userAcc).FirstOrDefault();
+
+
+            if (selectedBankAccountRecipient == null)
+            {
+                Utility.PrintMessage("Transfer failed. Recipient bank account number is invalid.", false);
+                return;
+            }
+
+            // check recipient's name
+            if (selectedBankAccountRecipient.FullName != selfTransfer.BankAccountName)
+            {
+                Utility.PrintMessage("Transfer failed. Name does not match.", false);
+                return;
+            }
+
+            // add transaction to transaction record -sender
+            InsertTransaction(selectedAccount.Id, TransactionType.Transfer, selfTransfer.TransferAmount, $"Transfered to {selectedBankAccountRecipient.AccountNumber} ({selectedBankAccountRecipient.FullName})");
+
+            // update sender's balance
+            selectedAccount.AccountBalance -= selfTransfer.TransferAmount;
+
+            // add transaction record -recipient
+            InsertTransaction(selectedBankAccountRecipient.Id, TransactionType.Transfer, selfTransfer.TransferAmount, $"Transfered from {selectedAccount.AccountNumber}({selectedAccount.FullName})");
+
+            // update receiver balance
+            selectedBankAccountRecipient.AccountBalance += selfTransfer.TransferAmount;
+
+            // print success message
+            Utility.PrintMessage($"You have successfully transfered {Utility.FormatAmount(selfTransfer.TransferAmount)} to {selfTransfer.BankAccountName}.", true);
         }
 
         private void ProcessInternalTransfer(InternalTransfer internalTransfer)
