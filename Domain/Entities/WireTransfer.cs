@@ -1,6 +1,6 @@
 ﻿namespace ATM_App.Domain.Entities
 {
-    public class InternalTransfer
+    public class WireTransfer
     {
         public decimal TransferAmount { get; set; }
 

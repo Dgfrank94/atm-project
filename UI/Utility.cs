@@ -41,22 +41,22 @@ namespace ATM_App.UI
         public static string GetSecretInput(string prompt)
         {
             bool isPrompt = true;
-            string asterisk = "";
+            ConsoleKey key = new();
+            var secretPassword = string.Empty;
 
-            StringBuilder input = new();
-
-            while (true)
+            do
             {
                 if (isPrompt)
                 {
                     Console.WriteLine(prompt);
                 }
-                    isPrompt = false;
-                    ConsoleKeyInfo inputKey = Console.ReadKey(true);
-                
+                isPrompt = false;
+                ConsoleKeyInfo inputKey = Console.ReadKey(intercept: true);
+                key = inputKey.Key;
+
                 if (inputKey.Key == ConsoleKey.Enter)
                 {
-                    if (input.Length == 4)
+                    if (secretPassword.Length == 4)
                     {
                         break;
                     }
@@ -64,23 +64,26 @@ namespace ATM_App.UI
                     {
                         PrintMessage("\nPlease enter 4 digits", false);
                         isPrompt = true;
-                        input.Clear();
+                        secretPassword = secretPassword.Remove(0);
                         continue;
                     }
                 }
-                
-                if (inputKey.Key == ConsoleKey.Backspace && input.Length > 0)
+
+                if (inputKey.Key == ConsoleKey.Backspace && secretPassword.Length > 0)
                 {
-                    input.Remove(input.Length - 1, 1);
+                    Console.Write("\b \b");
+                    secretPassword = secretPassword[0..^1];
                 }
-                else if (inputKey.Key != ConsoleKey.Backspace)
+                else if (!char.IsControl(inputKey.KeyChar))
                 {
-                    input.Append(inputKey.KeyChar);
-                    Console.Write(asterisk + "*");
+                    Console.Write("*");
+                    secretPassword += inputKey.KeyChar;
                 }
-            }
-            return input.ToString();
+            } while (key != ConsoleKey.Enter);
+            return secretPassword.ToString();
         }
+
+
 
         public static void PrintDotAnimation(int timer=10)
         {

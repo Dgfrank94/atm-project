@@ -64,11 +64,11 @@ namespace ATM_App.UI
             Console.WriteLine(":                           :");
             Console.WriteLine("1. Account Balance          :");
             Console.WriteLine("2. Deposit                  :");
-            Console.WriteLine("4. Withdrawal               :");
-            Console.WriteLine("5. Self Transfer            :");
-            Console.WriteLine("6. Internal Transfer        :");
-            Console.WriteLine("7. Transactions             :");
-            Console.WriteLine("8. Logout                   :");
+            Console.WriteLine("3. Withdrawal               :");
+            Console.WriteLine("4. Self Transfer            :");
+            Console.WriteLine("5. Internal Transfer        :");
+            Console.WriteLine("6. Transactions             :");
+            Console.WriteLine("7. Logout                   :");
         }
 
         internal static void LogoutProgress()
@@ -107,13 +107,13 @@ namespace ATM_App.UI
             }
         }
 
-        internal static InternalTransfer InternalTransferForm()
+        internal static WireTransfer WireTransferForm()
         {
-            InternalTransfer internalTransfer = new();
-            internalTransfer.RecipientBankAccountNumber = Validator.Convert<long>("recipient's account number:");
-            internalTransfer.TransferAmount = Validator.Convert<decimal>($"amount {cur}");
-            internalTransfer.RecipientBankAccountName = Utility.GetUserInput("recipient name: ");
-            return internalTransfer;
+            WireTransfer wireTransfer = new();
+            wireTransfer.RecipientBankAccountNumber = Validator.Convert<long>("recipient's account number:");
+            wireTransfer.TransferAmount = Validator.Convert<decimal>($"amount {cur}");
+            wireTransfer.RecipientBankAccountName = Utility.GetUserInput("recipient name: ");
+            return wireTransfer;
         }
 
         internal static SelfTransfer SelfTransferForm()
@@ -121,7 +121,6 @@ namespace ATM_App.UI
             SelfTransfer selfTransfer = new();
             selfTransfer.BankAccountNumber = Validator.Convert<long>("account number:");
             selfTransfer.TransferAmount = Validator.Convert<decimal>($"amount {cur}");
-            selfTransfer.BankAccountName = Utility.GetUserInput("recipient name: ");
             return selfTransfer;
         }
     }

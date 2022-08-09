@@ -12,7 +12,7 @@ namespace ATM_App.Domain.Enums
         PlaceDeposit,
         MakeWithdrawal,
         SelfTransfer,
-        InternalTransfer,
+        WireTransfer,
         ViewTransaction,
         Logout
     }

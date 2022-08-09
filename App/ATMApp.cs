@@ -15,12 +15,6 @@ namespace ATM_App
         private UserAccount selectedAccount;
         private List<Transaction> _listOfTransactions;
         private const decimal minimumKeptAmount = 5;
-        // private readonly AppScreen screen;
-
-       /* public ATMApp()
-        {
-            screen = new AppScreen();
-        }*/
 
         public void Run()
         {
@@ -43,6 +37,7 @@ namespace ATM_App
                 new UserAccount{Id = 3, AccountType = "Checking", FullName = "Bailey Mac", AccountNumber = 654321, CardNumber = 0123456789, CardPin = 0527, AccountBalance = 200.00m, IsLocked = true},
                 new UserAccount{Id = 4, AccountType = "Checking", FullName = "Yolanda Mac", AccountNumber = 0123, CardNumber = 012301230123, CardPin = 1126, AccountBalance = 1500.00m, IsLocked = false},
                 new UserAccount{Id = 5, AccountType = "Checking", FullName = "Dalayno Franklin", AccountNumber = 410, CardNumber = 410410410, CardPin = 6052, AccountBalance = 500.00m, IsLocked = false},
+                new UserAccount{Id = 6, AccountType = "Checking", FullName = "Dalayno Franklin", AccountNumber = 443, CardNumber = 443443443, CardPin = 6052, AccountBalance = 1500.00m, IsLocked = false},
             };
 
             _listOfTransactions = new List<Transaction>();
@@ -90,7 +85,6 @@ namespace ATM_App
                         }
                         Console.Clear();
                     }
-
                 }
             }
         }
@@ -99,7 +93,7 @@ namespace ATM_App
         {
             switch (Validator.Convert<int>("an option"))
             {
-                case (int) AppMenu.CheckBalance:
+                case (int)AppMenu.CheckBalance:
                     CheckBalance();
                     break;
                 case (int)AppMenu.PlaceDeposit:
@@ -109,12 +103,13 @@ namespace ATM_App
                     MakeWithdrawal();
                     break;
                 case (int)AppMenu.SelfTransfer:
+                    SelectAccount();
                     var selfTransfer = AppScreen.SelfTransferForm();
                     ProcessSelfTransfer(selfTransfer);
                     break;
-                case (int)AppMenu.InternalTransfer:
-                    var internalTransfer = AppScreen.InternalTransferForm();
-                    ProcessInternalTransfer(internalTransfer);
+                case (int)AppMenu.WireTransfer:
+                    var wireTransfer = AppScreen.WireTransferForm();
+                    ProcessWireTransfer(wireTransfer);
                     break;
                 case (int)AppMenu.ViewTransaction:
                     ViewTransaction();
@@ -278,57 +273,49 @@ namespace ATM_App
             }
 
             // check to see if recipient's account number is valid
-            var selectedBankAccountRecipient = (from userAcc in userAccountList
+            var selectedBankAccount = (from userAcc in userAccountList
                                                 where userAcc.AccountNumber == selfTransfer.BankAccountNumber
                                                 select userAcc).FirstOrDefault();
 
-
-            if (selectedBankAccountRecipient == null)
+            if (selectedBankAccount == null)
             {
-                Utility.PrintMessage("Transfer failed. Recipient bank account number is invalid.", false);
-                return;
-            }
-
-            // check recipient's name
-            if (selectedBankAccountRecipient.FullName != selfTransfer.BankAccountName)
-            {
-                Utility.PrintMessage("Transfer failed. Name does not match.", false);
+                Utility.PrintMessage("Transfer failed. Bank account number is invalid.", false);
                 return;
             }
 
             // add transaction to transaction record -sender
-            InsertTransaction(selectedAccount.Id, TransactionType.Transfer, selfTransfer.TransferAmount, $"Transfered to {selectedBankAccountRecipient.AccountNumber} ({selectedBankAccountRecipient.FullName})");
+            InsertTransaction(selectedAccount.Id, TransactionType.Transfer, selfTransfer.TransferAmount, $"Transfered to {selectedBankAccount.AccountNumber} ({selectedBankAccount.FullName})");
 
             // update sender's balance
             selectedAccount.AccountBalance -= selfTransfer.TransferAmount;
 
             // add transaction record -recipient
-            InsertTransaction(selectedBankAccountRecipient.Id, TransactionType.Transfer, selfTransfer.TransferAmount, $"Transfered from {selectedAccount.AccountNumber}({selectedAccount.FullName})");
+            InsertTransaction(selectedBankAccount.Id, TransactionType.Transfer, selfTransfer.TransferAmount, $"Transfered from {selectedAccount.AccountNumber}({selectedAccount.FullName})");
 
             // update receiver balance
-            selectedBankAccountRecipient.AccountBalance += selfTransfer.TransferAmount;
+            selectedBankAccount.AccountBalance += selfTransfer.TransferAmount;
 
             // print success message
-            Utility.PrintMessage($"You have successfully transfered {Utility.FormatAmount(selfTransfer.TransferAmount)} to {selfTransfer.BankAccountName}.", true);
+            Utility.PrintMessage($"You have successfully transfered {Utility.FormatAmount(selfTransfer.TransferAmount)} to account {selfTransfer.BankAccountNumber}.", true);
         }
 
-        private void ProcessInternalTransfer(InternalTransfer internalTransfer)
+        private void ProcessWireTransfer(WireTransfer wireTransfer)
         {
-            if (internalTransfer.TransferAmount <= 0)
+            if (wireTransfer.TransferAmount <= 0)
             {
                 Utility.PrintMessage("Amount needs to be more than zero. Try again", true);
                 return;
             }
 
             // check sender's account balance
-            if (internalTransfer.TransferAmount > selectedAccount.AccountBalance)
+            if (wireTransfer.TransferAmount > selectedAccount.AccountBalance)
             {
-                Utility.PrintMessage($"Transfer failed. You do not have enough funds to transfer {Utility.FormatAmount(internalTransfer.TransferAmount)}");
+                Utility.PrintMessage($"Transfer failed. You do not have enough funds to transfer {Utility.FormatAmount(wireTransfer.TransferAmount)}");
                 return;
             }
 
             // check minimum amount
-            if ((selectedAccount.AccountBalance - internalTransfer.TransferAmount) < minimumKeptAmount)
+            if ((selectedAccount.AccountBalance - wireTransfer.TransferAmount) < minimumKeptAmount)
             {
                 Utility.PrintMessage($"Transfer failed. Your account need to have a minimum of {Utility.FormatAmount(minimumKeptAmount)}", false);
                 return;
@@ -336,7 +323,7 @@ namespace ATM_App
 
             // check to see if recipient's account number is valid
             var selectedBankAccountRecipient = (from userAcc in userAccountList
-                                       where userAcc.AccountNumber == internalTransfer.RecipientBankAccountNumber
+                                       where userAcc.AccountNumber == wireTransfer.RecipientBankAccountNumber
                                        select userAcc).FirstOrDefault();
             
 
@@ -347,26 +334,26 @@ namespace ATM_App
             }
 
             // check recipient's name
-            if (selectedBankAccountRecipient.FullName != internalTransfer.RecipientBankAccountName)
+            if (selectedBankAccountRecipient.FullName != wireTransfer.RecipientBankAccountName)
             {
                 Utility.PrintMessage("Transfer failed. Recipient's name does not match.", false);
                 return;
             }
 
             // add transaction to transaction record -sender
-            InsertTransaction(selectedAccount.Id, TransactionType.Transfer, internalTransfer.TransferAmount, $"Transfered to {selectedBankAccountRecipient.AccountNumber} ({selectedBankAccountRecipient.FullName})");
+            InsertTransaction(selectedAccount.Id, TransactionType.Transfer, wireTransfer.TransferAmount, $"Transfered to {selectedBankAccountRecipient.AccountNumber} ({selectedBankAccountRecipient.FullName})");
 
             // update sender's balance
-            selectedAccount.AccountBalance -= internalTransfer.TransferAmount;
+            selectedAccount.AccountBalance -= wireTransfer.TransferAmount;
 
             // add transaction record -recipient
-            InsertTransaction(selectedBankAccountRecipient.Id, TransactionType.Transfer, internalTransfer.TransferAmount, $"Transfered from {selectedAccount.AccountNumber}({selectedAccount.FullName})");
+            InsertTransaction(selectedBankAccountRecipient.Id, TransactionType.Transfer, wireTransfer.TransferAmount, $"Transfered from {selectedAccount.AccountNumber}({selectedAccount.FullName})");
 
             // update receiver balance
-            selectedBankAccountRecipient.AccountBalance += internalTransfer.TransferAmount;
+            selectedBankAccountRecipient.AccountBalance += wireTransfer.TransferAmount;
 
             // print success message
-            Utility.PrintMessage($"You have successfully transfered {Utility.FormatAmount(internalTransfer.TransferAmount)} to {internalTransfer.RecipientBankAccountName}.", true);
+            Utility.PrintMessage($"You have successfully transfered {Utility.FormatAmount(wireTransfer.TransferAmount)} to {wireTransfer.RecipientBankAccountName}.", true);
         }
 
         public void ViewTransaction()
@@ -390,6 +377,23 @@ namespace ATM_App
                     table.Write();
                     Utility.PrintMessage($"You have {filteredTransactionList.Count} transaction(s)", true);
                 }
+            }
+        }
+
+        public void SelectAccount()
+        {
+            var table = new ConsoleTable("Id", "Bank Account Type", "Bank Account Number", "Bank Account Amount");
+            {
+                foreach (var account in userAccountList)
+                {
+                    if (selectedAccount.FullName == account.FullName && account.Id != selectedAccount.Id)
+                    {
+                        UserAccount otherAccount = account;
+                        table.AddRow(otherAccount.Id, otherAccount.AccountType, otherAccount.AccountNumber, otherAccount.AccountBalance);
+                    }
+                }
+                table.Options.EnableCount = false;
+                table.Write();
             }
         }
     }
