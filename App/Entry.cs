@@ -2,9 +2,9 @@
 
 namespace ATM_App.App
 {
-    class Entry
+    public class Entry
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             ATMApp atmApp = new();
             atmApp.InitializeData();

@@ -34,3 +34,5 @@ C:\Users\dfranklin\Code\C#\ATMApp\obj\Debug\net5.0\ATM App.dll
 C:\Users\dfranklin\Code\C#\ATMApp\obj\Debug\net5.0\ref\ATM App.dll
 C:\Users\dfranklin\Code\C#\ATMApp\obj\Debug\net5.0\ATM App.pdb
 C:\Users\dfranklin\Code\C#\ATMApp\obj\Debug\net5.0\ATM App.genruntimeconfig.cache
+C:\Users\dfranklin\Code\C#\ATMApp\bin\Debug\net5.0\xunit.abstractions.dll
+C:\Users\dfranklin\Code\C#\ATMApp\bin\Debug\net5.0\xunit.core.dll

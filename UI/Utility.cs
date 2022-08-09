@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Text;
 using System.Threading;
 
 namespace ATM_App.UI
@@ -85,7 +84,7 @@ namespace ATM_App.UI
 
 
 
-        public static void PrintDotAnimation(int timer=10)
+        public static void PrintDotAnimation(int timer = 10)
         {
             for (int i = 0; i < timer; i++)
             {

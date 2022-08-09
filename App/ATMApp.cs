@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ATM_App 
-{   
+namespace ATM_App
+{
     public class ATMApp : IUserLogin, IUserAccountActions, ITransaction
     {
         private List<UserAccount> userAccountList;
@@ -19,7 +19,7 @@ namespace ATM_App
         public void Run()
         {
             AppScreen.Welcome();
-            CheckUserCardNumberandPassword();
+            CheckUserCardNumberAndPassword();
             AppScreen.WelcomeCustomer(selectedAccount.FullName);
             while (true)
             {
@@ -43,10 +43,10 @@ namespace ATM_App
             _listOfTransactions = new List<Transaction>();
         }
 
-        public void CheckUserCardNumberandPassword()
+        public void CheckUserCardNumberAndPassword()
         {
             bool isCorrectLogin = false;
-            
+
             while (isCorrectLogin == false)
             {
                 UserAccount inputAccount = AppScreen.UserLoginForm();
@@ -274,8 +274,8 @@ namespace ATM_App
 
             // check to see if recipient's account number is valid
             var selectedBankAccount = (from userAcc in userAccountList
-                                                where userAcc.AccountNumber == selfTransfer.BankAccountNumber
-                                                select userAcc).FirstOrDefault();
+                                       where userAcc.AccountNumber == selfTransfer.BankAccountNumber
+                                       select userAcc).FirstOrDefault();
 
             if (selectedBankAccount == null)
             {
@@ -323,9 +323,9 @@ namespace ATM_App
 
             // check to see if recipient's account number is valid
             var selectedBankAccountRecipient = (from userAcc in userAccountList
-                                       where userAcc.AccountNumber == wireTransfer.RecipientBankAccountNumber
-                                       select userAcc).FirstOrDefault();
-            
+                                                where userAcc.AccountNumber == wireTransfer.RecipientBankAccountNumber
+                                                select userAcc).FirstOrDefault();
+
 
             if (selectedBankAccountRecipient == null)
             {

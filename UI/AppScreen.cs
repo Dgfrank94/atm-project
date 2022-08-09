@@ -88,8 +88,8 @@ namespace ATM_App.UI
             Console.WriteLine(":0.Other");
 
             int selectedAmount = Validator.Convert<int>("option:");
-            
-            switch(selectedAmount)
+
+            switch (selectedAmount)
             {
                 case 1:
                     return 200;
